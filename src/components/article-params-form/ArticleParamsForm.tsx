@@ -28,7 +28,7 @@ export const ArticleParamsForm = ({
 	const arrowClick = () => {
 		setOpen((preOpen) => !preOpen);
 	};
-	const [fontFamily, setFontFamily] = useState(
+	const [fontFamilyOption, setFontFamily] = useState(
 		defaultArticleState.fontFamilyOption
 	);
 	const [fontColor, setFontColor] = useState(defaultArticleState.fontColor);
@@ -38,7 +38,9 @@ export const ArticleParamsForm = ({
 	const [contentWidth, setContentWidth] = useState(
 		defaultArticleState.contentWidth
 	);
-	const [fontSize, setFontSize] = useState(defaultArticleState.fontSizeOption);
+	const [fontSizeOption, setFontSize] = useState(
+		defaultArticleState.fontSizeOption
+	);
 
 	const resetClick = () => {
 		setFontFamily(defaultArticleState.fontFamilyOption);
@@ -46,17 +48,18 @@ export const ArticleParamsForm = ({
 		setBackgroundColor(defaultArticleState.backgroundColor);
 		setContentWidth(defaultArticleState.contentWidth);
 		setFontSize(defaultArticleState.fontSizeOption);
+
+		setArticleState(defaultArticleState);
 	};
 
 	const commitClick = () => {
 		const articleState: ArticleStateType = {
-			fontFamilyOption: fontFamily,
-			fontColor: fontColor,
-			backgroundColor: backgroundColor,
-			contentWidth: contentWidth,
-			fontSizeOption: fontSize,
+			fontFamilyOption,
+			fontColor,
+			backgroundColor,
+			contentWidth,
+			fontSizeOption,
 		};
-
 		setArticleState(articleState);
 	};
 
@@ -80,13 +83,13 @@ export const ArticleParamsForm = ({
 						ЗАДАЙТЕ ПАРАМЕТРЫ
 					</Text>
 					<Select
-						selected={fontFamily}
+						selected={fontFamilyOption}
 						onChange={setFontFamily}
 						options={fontFamilyOptions}
 						title='ШРИФТ'
 					/>
 					<RadioGroup
-						selected={fontSize}
+						selected={fontSizeOption}
 						name='radio'
 						onChange={setFontSize}
 						options={fontSizeOptions}
