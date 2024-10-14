@@ -2,7 +2,7 @@ import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
-import { useState, SyntheticEvent } from 'react';
+import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 import { Separator } from '../separator';
 import { Text } from '../text';
 import { Select } from '../select';
@@ -24,10 +24,27 @@ type ArticleParamsFormProps = {
 export const ArticleParamsForm = ({
 	setArticleState,
 }: ArticleParamsFormProps) => {
+	const asideRef = useRef<HTMLElement | null>(null);
 	const [isOpen, setOpen] = useState(false);
 	const arrowClick = () => {
 		setOpen((preOpen) => !preOpen);
 	};
+
+	useEffect(() => {
+		const onMouseDown = (evt: Event) => {
+			const target = evt.target as Node;
+			if (!asideRef.current?.contains(target)) {
+				setOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', onMouseDown);
+
+		return () => {
+			document.removeEventListener('mousedown', onMouseDown);
+		};
+	}, []);
+
 	const [fontFamilyOption, setFontFamily] = useState(
 		defaultArticleState.fontFamilyOption
 	);
@@ -42,7 +59,7 @@ export const ArticleParamsForm = ({
 		defaultArticleState.fontSizeOption
 	);
 
-	const resetClick = () => {
+	const onReset = () => {
 		setFontFamily(defaultArticleState.fontFamilyOption);
 		setFontColor(defaultArticleState.fontColor);
 		setBackgroundColor(defaultArticleState.backgroundColor);
@@ -52,7 +69,7 @@ export const ArticleParamsForm = ({
 		setArticleState(defaultArticleState);
 	};
 
-	const commitClick = () => {
+	const onSubmit = () => {
 		const articleState: ArticleStateType = {
 			fontFamilyOption,
 			fontColor,
@@ -67,11 +84,14 @@ export const ArticleParamsForm = ({
 		<>
 			<ArrowButton isOpen={isOpen} onClick={arrowClick} />
 			<aside
+				ref={asideRef}
 				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
 				<form
 					className={styles.form}
+					onReset={onReset}
 					onSubmit={(e: SyntheticEvent) => {
 						e.preventDefault();
+						onSubmit();
 					}}>
 					<Text
 						as={'h2'}
@@ -115,8 +135,8 @@ export const ArticleParamsForm = ({
 						title='ШИРИНА КОНТЕНТА'
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' onClick={resetClick} />
-						<Button title='Применить' type='submit' onClick={commitClick} />
+						<Button title='Сбросить' type='reset' />
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>
